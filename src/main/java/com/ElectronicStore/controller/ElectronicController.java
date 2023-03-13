@@ -9,7 +9,7 @@ public class ElectronicController
     @GetMapping("/name")
     public String getName()
     {
-        return "Jeevan Garg";
+        return "Jeevan Garg Store";
     }
 
 }
