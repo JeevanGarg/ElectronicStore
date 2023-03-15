@@ -1,7 +1,6 @@
 package com.ElectronicStore.services;
 
 import com.ElectronicStore.dtos.UserDto;
-import com.ElectronicStore.entities.User;
 
 import java.util.List;
 
