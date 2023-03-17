@@ -1,5 +1,6 @@
 package com.ElectronicStore.entities;
 
+import com.ElectronicStore.validate.ImageNameValid;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,31 +19,24 @@ import javax.validation.constraints.Size;
 public class User
 {
     @Id
-    //@GeneratedValue(strategy = GenerationType.AUTO)
     private String userId;
 
     @Column(name = "user_name")
-    @Size(min = 3,max = 20,message = "Invalid Name !")
     private String name;
 
     @Column(name = "user_email",unique = true)
-   // @Email(message = "Invalid User Email")
-    @Pattern(regexp = "^[A-Za-z0-9+_.-]+@(.+)$",message = "Invalid User Email!")
-    @NotBlank(message = "Email is required")
     private String email;
 
-    @NotBlank
+    @Column(name = "user_password",length = 15)
     private String password;
 
-    @Size(min = 4,max = 6,message = "Invalid Gender")
     private String gender;
 
-    @NotBlank(message = "Write something about yourself")
+    @Column(length = 1000)
     private String about;
 
 
+    @Column(name = "user_image_name")
     private String imageName;
 
-    //@Pattern
-    //custom validator
 }

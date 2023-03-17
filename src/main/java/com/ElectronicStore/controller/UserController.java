@@ -2,6 +2,7 @@ package com.ElectronicStore.controller;
 
 import com.ElectronicStore.dtos.ApiResponseMessage;
 import com.ElectronicStore.dtos.UserDto;
+import com.ElectronicStore.exceptions.ResourceNotFoundException;
 import com.ElectronicStore.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,8 +30,7 @@ public class UserController
     //update
     @PutMapping("/update/{userId}")
     public ResponseEntity<UserDto> updateUser(@Valid @RequestBody UserDto userDto,
-                                              @PathVariable("userId") String userId)
-    {
+                                              @PathVariable("userId") String userId) throws ResourceNotFoundException {
         UserDto updateUser=this.userService.updateUser(userDto,userId);
         return new ResponseEntity<>(updateUser,HttpStatus.OK);
     }
@@ -38,8 +38,7 @@ public class UserController
     //delete
     //In responseEntity try to avoid sending String send in object(payloads)
     @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<ApiResponseMessage> deleteUser(@PathVariable("userId") String userId)
-    {
+    public ResponseEntity<ApiResponseMessage> deleteUser(@PathVariable("userId") String userId) throws ResourceNotFoundException {
         this.userService.deleteUser(userId);
         ApiResponseMessage message=ApiResponseMessage
                 .builder()
@@ -60,16 +59,14 @@ public class UserController
 
     //get Single
     @GetMapping("getUser/{userId}")
-    public ResponseEntity<UserDto> getSingleUser(@PathVariable("userId") String userId)
-    {
+    public ResponseEntity<UserDto> getSingleUser(@PathVariable("userId") String userId) throws ResourceNotFoundException {
         UserDto userDto=this.userService.getUserById(userId);
         return new ResponseEntity<>(userDto,HttpStatus.OK);
     }
 
     //get By email
     @GetMapping("/Email/{email}")
-    public ResponseEntity<UserDto> getByEmail(@PathVariable("email") String email)
-    {
+    public ResponseEntity<UserDto> getByEmail(@PathVariable("email") String email) throws ResourceNotFoundException {
         return new ResponseEntity<>(userService.getUserByEmail(email),HttpStatus.OK);
     }
 

@@ -2,6 +2,7 @@ package com.ElectronicStore.services;
 
 import com.ElectronicStore.dtos.UserDto;
 import com.ElectronicStore.entities.User;
+import com.ElectronicStore.exceptions.ResourceNotFoundException;
 import com.ElectronicStore.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,25 +36,30 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto, String userId)
-    {
+    public UserDto updateUser(UserDto userDto, String userId) throws ResourceNotFoundException {
         Optional<User> user=this.userRepository.findById(userId);
         if(user.isPresent())
         {
             this.modelMapper.map(userDto,user);
             this.userRepository.save(user.get());
+            return userDto;
         }
-        return userDto;
+        else {
+            throw new ResourceNotFoundException("Cannot found userId");
+        }
+
     }
 
     @Override
-    public void deleteUser(String userId)
-    {
+    public void deleteUser(String userId) throws ResourceNotFoundException {
         Optional<User> userOptional=this.userRepository.findById(userId);
 
         if(userOptional.isPresent())
         {
             this.userRepository.delete(userOptional.get());
+        }
+        else {
+            throw new ResourceNotFoundException("Cannot found userId");
         }
 
     }
@@ -72,8 +78,7 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public UserDto getUserById(String userId)
-    {
+    public UserDto getUserById(String userId) throws ResourceNotFoundException {
         Optional<User> userOptional=this.userRepository.findById(userId);
         if(userOptional.isPresent())
         {
@@ -81,7 +86,9 @@ public class UserServiceImpl implements UserService
             this.modelMapper.map(userOptional.get(),userDto);
             return userDto;
         }
-        return null;
+        else {
+            throw new ResourceNotFoundException("Cannot found userId");
+        }
     }
 
     @Override
@@ -97,8 +104,7 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public UserDto getUserByEmail(String email)
-    {
+    public UserDto getUserByEmail(String email) throws ResourceNotFoundException {
         UserDto userDto=new UserDto();
         Optional<User> userOptional=this.userRepository.findByEmail(email);
         if(userOptional.isPresent())
@@ -107,6 +113,8 @@ public class UserServiceImpl implements UserService
             return userDto;
         }
 
-        return null;
+        else {
+            throw new ResourceNotFoundException("Email is not found");
+        }
     }
 }
