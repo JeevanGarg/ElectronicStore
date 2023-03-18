@@ -1,5 +1,6 @@
 package com.ElectronicStore.services;
 
+import com.ElectronicStore.dtos.PageableResponse;
 import com.ElectronicStore.dtos.UserDto;
 import com.ElectronicStore.exceptions.ResourceNotFoundException;
 
@@ -17,7 +18,7 @@ public interface UserService
     void deleteUser(String userId) throws ResourceNotFoundException;
 
     //get all users
-    List<UserDto> getAllUser();
+    PageableResponse<UserDto> getAllUser(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
 
     //get single user by id
     UserDto getUserById(String userId) throws ResourceNotFoundException;

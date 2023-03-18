@@ -1,11 +1,17 @@
-package com.ElectronicStore.services;
+package com.ElectronicStore.services.impl;
 
+import com.ElectronicStore.dtos.PageableResponse;
 import com.ElectronicStore.dtos.UserDto;
 import com.ElectronicStore.entities.User;
 import com.ElectronicStore.exceptions.ResourceNotFoundException;
 import com.ElectronicStore.repository.UserRepository;
+import com.ElectronicStore.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -65,16 +71,31 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public List<UserDto> getAllUser()
+    public PageableResponse<UserDto> getAllUser(Integer pageNumber, Integer pageSize, String sortBy, String sortDir)
     {
+        Sort sort=(sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()):(Sort.by(sortBy).ascending());
 
-        List<User> userList= this.userRepository.findAll();
+        Pageable pageable= PageRequest.of(pageNumber,pageSize,sort);
+
+        Page<User> page=this.userRepository.findAll(pageable);
+
+        List<User> userList=page.getContent();
+
         List<UserDto> userDtoList=userList.stream().map(user->{
             UserDto userDto=new UserDto();
             this.modelMapper.map(user,userDto);
             return userDto;
         }).collect(Collectors.toList());
-        return userDtoList;
+
+        PageableResponse<UserDto> pageableResponse=new PageableResponse<>();
+        pageableResponse.setContent(userDtoList);
+        pageableResponse.setPageNumber(page.getNumber());
+        pageableResponse.setPageSize(page.getSize());
+        pageableResponse.setTotalElements(page.getTotalElements());
+        pageableResponse.setTotalPages(page.getTotalPages());
+        pageableResponse.setLastPage(page.isLast());
+
+        return pageableResponse;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.ElectronicStore.controller;
 
 import com.ElectronicStore.dtos.ApiResponseMessage;
+import com.ElectronicStore.dtos.PageableResponse;
 import com.ElectronicStore.dtos.UserDto;
 import com.ElectronicStore.exceptions.ResourceNotFoundException;
 import com.ElectronicStore.services.UserService;
@@ -52,9 +53,13 @@ public class UserController
 
     //get all
     @GetMapping("/allUsers")
-    public ResponseEntity<List<UserDto>> getAllUsers()
+    public ResponseEntity<PageableResponse<UserDto>> getAllUsers(
+            @RequestParam(value = "pageNumber",defaultValue = "0",required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize",defaultValue = "2",required = false) Integer pageSize,
+            @RequestParam(value = "sortBy",defaultValue = "name",required = false) String sortBy,
+            @RequestParam(value = "sortDir",defaultValue = "asc",required = false) String sortDir)
     {
-        return new ResponseEntity<>(userService.getAllUser(),HttpStatus.OK);
+        return new ResponseEntity<>(userService.getAllUser(pageNumber,pageSize,sortBy,sortDir),HttpStatus.OK);
     }
 
     //get Single
