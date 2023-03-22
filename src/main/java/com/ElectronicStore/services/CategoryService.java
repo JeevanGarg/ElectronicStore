@@ -16,7 +16,7 @@ public interface CategoryService
     void delete(String categoryId) throws ResourceNotFoundException;
 
     //get all
-    PageableResponse<CategoryDto> getAll();
+    PageableResponse<CategoryDto> getAll(Integer pageNumber,Integer pageSize,String sortBy,String sortDir);
 
     //get single category detail
     CategoryDto get(String categoryId) throws ResourceNotFoundException;

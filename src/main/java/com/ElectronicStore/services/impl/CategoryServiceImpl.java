@@ -8,9 +8,16 @@ import com.ElectronicStore.repository.CategoryRepository;
 import com.ElectronicStore.services.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService
@@ -24,6 +31,8 @@ public class CategoryServiceImpl implements CategoryService
     @Override
     public CategoryDto create(CategoryDto categoryDto)
     {
+        String categoryId= UUID.randomUUID().toString();
+        categoryDto.setCategoryId(categoryId);
         Category category=modelMapper.map(categoryDto, Category.class);
         Category savedCategory=categoryRepository.save(category);
         CategoryDto categoryDto1=modelMapper.map(savedCategory, CategoryDto.class);
@@ -34,12 +43,16 @@ public class CategoryServiceImpl implements CategoryService
     public CategoryDto update(CategoryDto categoryDto, String categoryId) throws ResourceNotFoundException
     {
         Optional<Category> categoryOptional=this.categoryRepository.findById(categoryId);
+        Category category=categoryOptional.get();
         if(categoryOptional.isEmpty())
         {
             throw new ResourceNotFoundException("Category Id not found!");
         }
 
-        Category savedCategory=this.categoryRepository.save(categoryOptional.get());
+        category.setDescription(categoryDto.getDescription());
+        category.setTitle(categoryDto.getTitle());
+        category.setCoverImage(categoryDto.getCoverImage());
+        Category savedCategory=this.categoryRepository.save(category);
         return this.modelMapper.map(savedCategory,CategoryDto.class);
     }
 
@@ -57,9 +70,28 @@ public class CategoryServiceImpl implements CategoryService
     }
 
     @Override
-    public PageableResponse<CategoryDto> getAll()
+    public PageableResponse<CategoryDto> getAll(Integer pageNumber,Integer pageSize,String sortBy,String sortDir)
     {
-        return null;
+        Sort sort=(sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()):(Sort.by(sortBy).ascending()) ;
+        Pageable pageable= PageRequest.of(pageNumber,pageSize,sort);
+
+        Page<Category> page=this.categoryRepository.findAll(pageable);
+
+        List<Category> categoryList=page.getContent();
+
+        List<CategoryDto> categoryDtoList=categoryList.stream().map(category -> {
+           return this.modelMapper.map(category,CategoryDto.class);
+        }).collect(Collectors.toList());
+
+        PageableResponse<CategoryDto> pageableResponse=new PageableResponse<>();
+        pageableResponse.setContent(categoryDtoList);
+        pageableResponse.setPageNumber(page.getNumber());
+        pageableResponse.setPageSize(page.getSize());
+        pageableResponse.setTotalElements(page.getTotalElements());
+        pageableResponse.setTotalPages(page.getTotalPages());
+        pageableResponse.setLastPage(page.isLast());
+
+        return pageableResponse;
     }
 
     @Override
