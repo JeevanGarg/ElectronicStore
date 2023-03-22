@@ -4,6 +4,7 @@ import com.ElectronicStore.dtos.CategoryDto;
 import com.ElectronicStore.dtos.PageableResponse;
 import com.ElectronicStore.entities.Category;
 import com.ElectronicStore.exceptions.ResourceNotFoundException;
+import com.ElectronicStore.helper.Helper;
 import com.ElectronicStore.repository.CategoryRepository;
 import com.ElectronicStore.services.CategoryService;
 import org.modelmapper.ModelMapper;
@@ -77,19 +78,7 @@ public class CategoryServiceImpl implements CategoryService
 
         Page<Category> page=this.categoryRepository.findAll(pageable);
 
-        List<Category> categoryList=page.getContent();
-
-        List<CategoryDto> categoryDtoList=categoryList.stream().map(category -> {
-           return this.modelMapper.map(category,CategoryDto.class);
-        }).collect(Collectors.toList());
-
-        PageableResponse<CategoryDto> pageableResponse=new PageableResponse<>();
-        pageableResponse.setContent(categoryDtoList);
-        pageableResponse.setPageNumber(page.getNumber());
-        pageableResponse.setPageSize(page.getSize());
-        pageableResponse.setTotalElements(page.getTotalElements());
-        pageableResponse.setTotalPages(page.getTotalPages());
-        pageableResponse.setLastPage(page.isLast());
+        PageableResponse<CategoryDto> pageableResponse=Helper.getPageableResponse(page,CategoryDto.class);
 
         return pageableResponse;
     }
