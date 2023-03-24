@@ -47,8 +47,14 @@ public class UserServiceImpl implements UserService
         Optional<User> user=this.userRepository.findById(userId);
         if(user.isPresent())
         {
-            this.modelMapper.map(userDto,user);
-            this.userRepository.save(user.get());
+            User user1=user.get();
+            user1.setAbout(userDto.getAbout());
+            user1.setName(userDto.getName());
+            user1.setGender(userDto.getGender());
+            user1.setPassword(userDto.getPassword());
+            user1.setAbout(userDto.getAbout());
+            user1.setImageName(userDto.getImageName());
+            this.userRepository.save(user1);
             return userDto;
         }
         else {

@@ -1,16 +1,21 @@
 package com.ElectronicStore.controller;
 
 import com.ElectronicStore.dtos.ApiResponseMessage;
+import com.ElectronicStore.dtos.ImageResponse;
 import com.ElectronicStore.dtos.PageableResponse;
 import com.ElectronicStore.dtos.UserDto;
 import com.ElectronicStore.exceptions.ResourceNotFoundException;
+import com.ElectronicStore.services.FileService;
 import com.ElectronicStore.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,6 +25,11 @@ public class UserController
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private FileService fileService;
+
+    @Value("${user.profile.image.path}")
+    private String imageUploadPath;
     //create
     @PostMapping("/create")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto)
@@ -81,5 +91,29 @@ public class UserController
     {
         return new ResponseEntity<>(userService.searchUser(keywords),HttpStatus.OK);
     }
+
+    //upload user image
+
+    @PostMapping("/image/{userId}")
+    public ResponseEntity<ImageResponse> uploadUserImage(
+            @RequestParam("userImage")MultipartFile image,
+            @PathVariable("userId") String userId) throws IOException, ResourceNotFoundException
+    {
+        String imageName=fileService.uploadFile(image,imageUploadPath);
+        //updating user_image_name in userService
+
+        UserDto userDto=this.userService.getUserById(userId);
+        userDto.setImageName(imageName);
+        userService.updateUser(userDto,userId);
+
+
+        ImageResponse response=ImageResponse.builder()
+                .imageName(imageName).success(true).status(HttpStatus.OK).build();
+
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
+    }
+
+
+    //serve user image
 
 }
