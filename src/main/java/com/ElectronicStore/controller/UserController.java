@@ -10,12 +10,17 @@ import com.ElectronicStore.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -49,7 +54,7 @@ public class UserController
     //delete
     //In responseEntity try to avoid sending String send in object(payloads)
     @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<ApiResponseMessage> deleteUser(@PathVariable("userId") String userId) throws ResourceNotFoundException {
+    public ResponseEntity<ApiResponseMessage> deleteUser(@PathVariable("userId") String userId) throws ResourceNotFoundException, IOException {
         this.userService.deleteUser(userId);
         ApiResponseMessage message=ApiResponseMessage
                 .builder()
@@ -115,5 +120,14 @@ public class UserController
 
 
     //serve user image
+    @GetMapping("/image/{userId}")
+    public void serveUserImage(@PathVariable("userId") String userId, HttpServletResponse response) throws ResourceNotFoundException, IOException {
+       UserDto userDto= userService.getUserById(userId);
+       InputStream inputStream=fileService.getResource(imageUploadPath,userDto.getImageName());
+
+       response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+
+        StreamUtils.copy(inputStream,response.getOutputStream());
+    }
 
 }

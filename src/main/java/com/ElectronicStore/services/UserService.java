@@ -4,6 +4,7 @@ import com.ElectronicStore.dtos.PageableResponse;
 import com.ElectronicStore.dtos.UserDto;
 import com.ElectronicStore.exceptions.ResourceNotFoundException;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface UserService
@@ -15,7 +16,7 @@ public interface UserService
     UserDto updateUser(UserDto userDto,String userId) throws ResourceNotFoundException;
 
     //delete
-    void deleteUser(String userId) throws ResourceNotFoundException;
+    void deleteUser(String userId) throws ResourceNotFoundException, IOException;
 
     //get all users
     PageableResponse<UserDto> getAllUser(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);

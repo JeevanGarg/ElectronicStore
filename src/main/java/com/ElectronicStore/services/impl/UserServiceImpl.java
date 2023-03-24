@@ -9,12 +9,18 @@ import com.ElectronicStore.repository.UserRepository;
 import com.ElectronicStore.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,6 +34,9 @@ public class UserServiceImpl implements UserService
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Value("${user.profile.image.path}")
+    private String imagePath;
 
     @Override
     public UserDto createUser(UserDto userDto)
@@ -64,8 +73,21 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public void deleteUser(String userId) throws ResourceNotFoundException {
+    public void deleteUser(String userId) throws ResourceNotFoundException, IOException {
         Optional<User> userOptional=this.userRepository.findById(userId);
+
+        //delete user profile image from image folder
+        //image/user/abc.png
+        String fullPath=imagePath+userOptional.get().getImageName();
+
+        try {
+            Path path= Paths.get(fullPath);
+            Files.delete(path);
+        }
+        catch (NoSuchFileException e)
+        {
+            e.printStackTrace();
+        }
 
         if(userOptional.isPresent())
         {
