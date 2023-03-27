@@ -9,12 +9,18 @@ import com.ElectronicStore.repository.CategoryRepository;
 import com.ElectronicStore.services.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,6 +34,9 @@ public class CategoryServiceImpl implements CategoryService
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Value("${category.profile.image.path}")
+    private String imagePath;
 
     @Override
     public CategoryDto create(CategoryDto categoryDto)
@@ -62,10 +71,22 @@ public class CategoryServiceImpl implements CategoryService
     {
         Optional<Category> deleteOptional=this.categoryRepository.findById(categoryId);
 
+        String fullPath=imagePath+deleteOptional.get().getCoverImage();
         if(deleteOptional.isEmpty())
         {
             throw new ResourceNotFoundException("Category Id not found!");
         }
+
+        try
+        {
+            Path path= Paths.get(fullPath);
+            Files.delete(path);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
         this.categoryRepository.deleteById(categoryId);
 
     }

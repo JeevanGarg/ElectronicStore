@@ -18,7 +18,8 @@ public class ImageNameValidator implements ConstraintValidator<ImageNameValid,St
         {
             return false;
         }
-        else {
+        else
+        {
             return true;
         }
     }
