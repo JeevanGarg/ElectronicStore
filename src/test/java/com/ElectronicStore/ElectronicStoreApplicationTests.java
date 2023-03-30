@@ -1,18 +1,30 @@
 package com.ElectronicStore;
 
-import com.ElectronicStore.services.UserService;
-import com.ElectronicStore.services.impl.UserServiceImpl;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeEach;
+
+import com.ElectronicStore.dtos.CategoryDto;
+import com.ElectronicStore.exceptions.ResourceNotFoundException;
+import com.ElectronicStore.services.CategoryService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Optional;
+
 
 @SpringBootTest
 class  ElectronicStoreApplicationTests
 {
+    @Autowired
+    private CategoryService categoryService;
+
+    @Test
+    public void getCategoryTest() throws ResourceNotFoundException {
+        CategoryDto categoryDto=this.categoryService.get("bc73f1bd-6819-4be6-957b-ce819666fc8e");
+
+        Assertions.assertEquals("Electronics",categoryDto.getTitle());
+    }
 
 }
+
+

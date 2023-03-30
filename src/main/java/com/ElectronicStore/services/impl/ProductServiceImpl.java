@@ -47,7 +47,7 @@ public class ProductServiceImpl implements ProductService
             throw new ResourceNotFoundException("product not found with given Id");
         }
 
-        Product product=productOptional.get();
+            Product product=productOptional.get();
 
 
             product.setDescription(productDto.getDescription());
@@ -57,6 +57,7 @@ public class ProductServiceImpl implements ProductService
             product.setTitle(productDto.getTitle());
             product.setDiscountedPrice(productDto.getDiscountedPrice());
             product.setLive(productDto.getLive());
+            product.setProductImageName(productDto.getProductImageName());
 
         Product updatedProduct = productRepository.save(product);
         return this.modelMapper.map(updatedProduct,ProductDto.class);

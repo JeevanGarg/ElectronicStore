@@ -39,4 +39,6 @@ public class Product
 
     private Boolean stock;
 
+    private String productImageName;
+
 }

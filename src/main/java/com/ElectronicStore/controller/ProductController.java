@@ -1,15 +1,21 @@
 package com.ElectronicStore.controller;
 
-import com.ElectronicStore.dtos.ApiResponseMessage;
-import com.ElectronicStore.dtos.PageableResponse;
-import com.ElectronicStore.dtos.ProductDto;
+import com.ElectronicStore.dtos.*;
 import com.ElectronicStore.exceptions.ResourceNotFoundException;
+import com.ElectronicStore.services.FileService;
 import com.ElectronicStore.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -18,6 +24,12 @@ public class ProductController
 {
     @Autowired
     private ProductService productService;
+
+    @Value("${product.profile.image.path}")
+    private String imagePath;
+
+    @Autowired
+    private FileService fileService;
 
     @PostMapping("/add")
     public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto)
@@ -92,6 +104,40 @@ public class ProductController
 
         return new ResponseEntity<>(pageableResponse,HttpStatus.OK);
 
+    }
+
+    //upload image
+
+    @PostMapping("/image/{productId}")
+    public ResponseEntity<ImageResponse> uploadProductImage(
+            @PathVariable("productId") String productId,
+            @RequestParam("productImage") MultipartFile file
+            ) throws ResourceNotFoundException, IOException
+    {
+        String fileName = fileService.uploadFile(file, imagePath);
+
+        ProductDto productDto = productService.get(productId);
+        productDto.setProductImageName(fileName);
+
+        ProductDto updateProduct = productService.update(productDto, productId);
+
+        ImageResponse imageResponse = ImageResponse.builder().imageName(updateProduct.getProductImageName()).message("Image successfully uploaded")
+                .success(true).status(HttpStatus.CREATED).build();
+
+        return new ResponseEntity<>(imageResponse,HttpStatus.CREATED);
+
+    }
+
+    @GetMapping("/image/{productId}")
+    public void serveProductImage(
+            @PathVariable("productId") String productId,
+            HttpServletResponse response) throws ResourceNotFoundException, IOException
+    {
+        ProductDto productDto = productService.get(productId);
+        InputStream inputStream = fileService.getResource(imagePath, productDto.getProductImageName());
+
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        StreamUtils.copy(inputStream,response.getOutputStream());
     }
 
 }

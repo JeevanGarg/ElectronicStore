@@ -29,4 +29,6 @@ public class ProductDto
     private Boolean live;
 
     private Boolean stock;
+
+    private String productImageName;
 }
