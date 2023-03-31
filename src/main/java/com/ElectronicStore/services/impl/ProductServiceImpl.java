@@ -2,9 +2,11 @@ package com.ElectronicStore.services.impl;
 
 import com.ElectronicStore.dtos.PageableResponse;
 import com.ElectronicStore.dtos.ProductDto;
+import com.ElectronicStore.entities.Category;
 import com.ElectronicStore.entities.Product;
 import com.ElectronicStore.exceptions.ResourceNotFoundException;
 import com.ElectronicStore.helper.Helper;
+import com.ElectronicStore.repository.CategoryRepository;
 import com.ElectronicStore.repository.ProductRepository;
 import com.ElectronicStore.services.ProductService;
 import org.modelmapper.ModelMapper;
@@ -28,6 +30,9 @@ public class ProductServiceImpl implements ProductService
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     @Override
     public ProductDto create(ProductDto productDto)
     {
@@ -35,8 +40,8 @@ public class ProductServiceImpl implements ProductService
         Product product=this.modelMapper.map(productDto, Product.class);
         product.setProductId(id);
         product.setAddedDate(new Date());
-        productRepository.save(product);
-        return productDto;
+        Product save = productRepository.save(product);
+        return modelMapper.map(save,ProductDto.class);
     }
 
     @Override
@@ -119,5 +124,19 @@ public class ProductServiceImpl implements ProductService
         PageableResponse<ProductDto> pageableResponse = Helper.getPageableResponse(page, ProductDto.class);
 
         return pageableResponse;
+    }
+
+    @Override
+    public ProductDto createWithcategory(ProductDto productDto, String categoryId) throws ResourceNotFoundException {
+        //fetch the category from db
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+        String id= UUID.randomUUID().toString();
+        Product product=this.modelMapper.map(productDto, Product.class);
+        product.setProductId(id);
+        product.setAddedDate(new Date());
+        product.setCategory(category);
+        Product save = productRepository.save(product);
+        return modelMapper.map(save,ProductDto.class);
     }
 }

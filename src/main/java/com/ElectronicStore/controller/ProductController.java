@@ -140,4 +140,17 @@ public class ProductController
         StreamUtils.copy(inputStream,response.getOutputStream());
     }
 
+    //create product with category
+
+    @PostMapping("/{categoryId}")
+    public ResponseEntity<ProductDto> createProductWithCategory(
+            @PathVariable("categoryId") String categoryId,
+            @RequestBody ProductDto productDto) throws ResourceNotFoundException
+    {
+        ProductDto productWithcategory = productService.createWithcategory(productDto, categoryId);
+
+        return new ResponseEntity<>(productWithcategory,HttpStatus.CREATED);
+    }
+
+
 }

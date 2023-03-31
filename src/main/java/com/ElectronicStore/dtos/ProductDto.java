@@ -1,6 +1,7 @@
 package com.ElectronicStore.dtos;
 
 
+import com.ElectronicStore.entities.Category;
 import lombok.*;
 
 import java.util.Date;
@@ -31,4 +32,6 @@ public class ProductDto
     private Boolean stock;
 
     private String productImageName;
+
+    private CategoryDto category;
 }

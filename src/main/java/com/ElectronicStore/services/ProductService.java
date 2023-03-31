@@ -21,4 +21,7 @@ public interface ProductService
     PageableResponse<ProductDto> getAllLive(int pageNumber,int pageSize,String sortBy,String sortDir);
 
     PageableResponse<ProductDto> searchByTitle(String title,int pageNumber,int pageSize,String sortBy,String sortDir);
+
+    //create Product with category
+    ProductDto createWithcategory(ProductDto productDto,String categoryId) throws ResourceNotFoundException;
 }
