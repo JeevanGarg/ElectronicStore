@@ -152,5 +152,33 @@ public class ProductController
         return new ResponseEntity<>(productWithcategory,HttpStatus.CREATED);
     }
 
+    //update category in product
+    @PutMapping("/{productId}/{categoryId}")
+    public ResponseEntity<ProductDto> createProductWithCategory(
+            @PathVariable("categoryId") String categoryId,
+            @PathVariable("productId") String productId) throws ResourceNotFoundException
+    {
+        ProductDto productWithcategory = productService.updateCategory(productId, categoryId);
+
+        return new ResponseEntity<>(productWithcategory,HttpStatus.OK);
+    }
+
+
+    //get all products from categories
+
+    @GetMapping("/allProducts/{categoryId}")
+    public ResponseEntity<PageableResponse<ProductDto>> getProductsOfCategory(
+            @PathVariable("categoryId") String categoryId,
+            @RequestParam(value = "pageNumber",defaultValue = "0",required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize",defaultValue = "10",required = false) Integer pageSize,
+            @RequestParam(value = "sortBy",defaultValue = "title",required = false) String sortBy,
+            @RequestParam(value = "sortDir",defaultValue = "asc",required = false) String sortDir) throws ResourceNotFoundException
+    {
+        PageableResponse<ProductDto> response = productService.getAllOfCategory(categoryId,pageNumber,pageSize,sortBy,sortDir);
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+
 
 }

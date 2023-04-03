@@ -24,4 +24,8 @@ public interface ProductService
 
     //create Product with category
     ProductDto createWithcategory(ProductDto productDto,String categoryId) throws ResourceNotFoundException;
+
+    ProductDto updateCategory(String productId,String categoryId) throws ResourceNotFoundException;
+
+    PageableResponse<ProductDto> getAllOfCategory(String categoryId,int pageNumber,int pageSize,String sortBy,String sortDir) throws ResourceNotFoundException;
 }
