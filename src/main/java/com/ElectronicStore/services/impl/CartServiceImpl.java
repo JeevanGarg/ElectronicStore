@@ -90,7 +90,7 @@ public class CartServiceImpl implements CartService
 
         if(!updated.get())
         {
-            CartItem cartItem = CartItem.builder().quantity(quantity).totalPrice(quantity * product.getPrice())
+            CartItem cartItem = CartItem.builder().quantity(quantity).totalPrice(quantity * product.getDiscountedPrice())
                     .cart(cart).product(product).build();
 
             cart.getItems().add(cartItem);
