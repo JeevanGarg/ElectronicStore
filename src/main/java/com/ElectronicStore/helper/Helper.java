@@ -1,10 +1,7 @@
 package com.ElectronicStore.helper;
 
 import com.ElectronicStore.dtos.PageableResponse;
-import com.ElectronicStore.dtos.UserDto;
-import com.ElectronicStore.entities.User;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
