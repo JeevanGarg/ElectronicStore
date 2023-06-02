@@ -123,7 +123,8 @@ public class UserController
 
     //serve user image
     @GetMapping("/image/{userId}")
-    public void serveUserImage(@PathVariable("userId") String userId, HttpServletResponse response) throws ResourceNotFoundException, IOException {
+    public void serveUserImage(@PathVariable("userId") String userId, HttpServletResponse response) throws ResourceNotFoundException, IOException
+    {
        UserDto userDto= userService.getUserById(userId);
        InputStream inputStream=fileService.getResource(imageUploadPath,userDto.getImageName());
 

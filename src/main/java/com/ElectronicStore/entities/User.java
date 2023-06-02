@@ -3,6 +3,8 @@ package com.ElectronicStore.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -34,5 +36,8 @@ public class User
 
     @Column(name = "user_image_name")
     private String imageName;
+
+    @OneToMany(mappedBy = "order",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private List<OrderItem> list=new ArrayList<>();
 
 }

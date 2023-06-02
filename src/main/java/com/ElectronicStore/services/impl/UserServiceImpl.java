@@ -8,6 +8,7 @@ import com.ElectronicStore.helper.Helper;
 import com.ElectronicStore.repository.UserRepository;
 import com.ElectronicStore.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService
 {
+
     @Autowired
     private UserRepository userRepository;
 
